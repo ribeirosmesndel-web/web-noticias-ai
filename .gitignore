@@ -1,0 +1,32 @@
+# Credentials and Config
+config/db.php
+/config/db.php
+
+# Media and Uploads
+assets/uploads/
+/assets/uploads/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary files
+/tmp
+*.log
+
+# N8N Workflows
+/n8n-workflows/
