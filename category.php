@@ -59,6 +59,8 @@ $site_name = get_setting($pdo, 'site_name', 'Portal');
         <?= htmlspecialchars($site_name) ?>
     </title>
 
+    <!-- Boxicons for elegant icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -121,15 +123,32 @@ $site_name = get_setting($pdo, 'site_name', 'Portal');
                     <?= htmlspecialchars(explode(' ', $site_name)[0]) ?><span><?= isset(explode(' ', $site_name)[1]) ? htmlspecialchars(explode(' ', $site_name)[1]) : '' ?></span>
                 </a>
                 <div class="nav-actions">
+                    <form action="search.php" method="GET" class="header-search">
+                        <input type="text" name="q" placeholder="Buscar notícias..." required>
+                        <button type="submit" aria-label="Buscar"><i class='bx bx-search'></i></button>
+                    </form>
                     <button class="theme-toggle" id="themeToggle" aria-label="Alternar Tema">
                         <i class='bx bx-moon'></i>
                     </button>
-                    <a href="index.php"
-                        style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent);">
-                        Voltar Home <i class='bx bx-right-arrow-alt'></i>
-                    </a>
                 </div>
             </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.php">Página Inicial</a></li>
+                    <?php
+                    try {
+                        $stmt_cats_nav = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+                        $categories_nav = $stmt_cats_nav->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($categories_nav as $cat): ?>
+                            <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>"
+                                    <?= $cat['slug'] == $category['slug'] ? 'class="active"' : '' ?>>
+                                    <?= htmlspecialchars($cat['name']) ?>
+                                </a></li>
+                        <?php endforeach;
+                    } catch (Exception $e) {
+                    } ?>
+                </ul>
+            </nav>
         </div>
     </header>
 
@@ -152,8 +171,13 @@ $site_name = get_setting($pdo, 'site_name', 'Portal');
     <main class="container">
 
         <?php if (empty($articles)): ?>
-            <p style="text-align:center; color: var(--text-muted); padding: 2rem 0;">Nenhum artigo encontrado nesta
-                categoria ainda.</p>
+            <div
+                style="text-align: center; padding: 4rem 2rem; background: var(--surface); border-radius: var(--radius-md); border: 1px dashed var(--border);">
+                <i class='bx bx-file-blank' style="font-size: 4rem; color: var(--muted); margin-bottom: 1rem;"></i>
+                <h2 class="premium-serif">Nenhum artigo encontrado aqui</h2>
+                <p style="color: var(--muted); margin-top: 0.5rem;">Ainda não formatamos as notícias sobre
+                    "<?= htmlspecialchars($category['name']) ?>". Volte mais tarde.</p>
+            </div>
         <?php else: ?>
             <div class="news-list">
                 <?php foreach ($articles as $news): ?>

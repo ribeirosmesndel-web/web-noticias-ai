@@ -61,6 +61,8 @@ $seo_desc = !empty($article['seo_description']) ? $article['seo_description'] : 
     <title><?= htmlspecialchars($seo_title) ?> - <?= htmlspecialchars($site_name) ?></title>
     <meta name="description" content="<?= htmlspecialchars($seo_desc) ?>">
 
+    <!-- Boxicons for elegant icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="assets/css/style.css">
 
     <?= $adsense_header ?>
@@ -71,13 +73,37 @@ $seo_desc = !empty($article['seo_description']) ? $article['seo_description'] : 
     <header class="site-header">
         <div class="container">
             <div class="header-top">
-                <a href="index.php" class="logo"><?= htmlspecialchars($site_name) ?></a>
+                <a href="index.php" class="logo">
+                    <i class='bx bx-news'></i>
+                    <?= htmlspecialchars(explode(' ', $site_name)[0]) ?><span><?= isset(explode(' ', $site_name)[1]) ? htmlspecialchars(explode(' ', $site_name)[1]) : '' ?></span>
+                </a>
                 <div class="nav-actions">
-                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar Tema">🌓</button>
-                    <a href="index.php" style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Back to
-                        home</a>
+                    <form action="search.php" method="GET" class="header-search">
+                        <input type="text" name="q" placeholder="Buscar notícias..." required>
+                        <button type="submit" aria-label="Buscar"><i class='bx bx-search'></i></button>
+                    </form>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar Tema">
+                        <i class='bx bx-moon'></i>
+                    </button>
                 </div>
             </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.php">Página Inicial</a></li>
+                    <?php
+                    try {
+                        $stmt_cats_nav = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+                        $categories_nav = $stmt_cats_nav->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($categories_nav as $cat): ?>
+                            <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>"
+                                    <?= $cat['slug'] == $article['category_slug'] ? 'class="active"' : '' ?>>
+                                    <?= htmlspecialchars($cat['name']) ?>
+                                </a></li>
+                        <?php endforeach;
+                    } catch (Exception $e) {
+                    } ?>
+                </ul>
+            </nav>
         </div>
     </header>
 
