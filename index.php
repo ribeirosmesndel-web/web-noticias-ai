@@ -1,43 +1,29 @@
 <?php
 require_once 'config/core.php';
 
-// If DB isn't setup, redirect to install
 if (!file_exists('config/db.php')) {
     header("Location: install/index.php");
     exit;
 }
 
-// Fetch Settings
-$site_name = get_setting($pdo, 'site_name', 'THE VANGUARD');
+$site_name = get_setting($pdo, 'site_name', 'NoticiasNew');
 $site_desc = get_setting($pdo, 'site_description', 'Últimas notícias');
 $adsense_header = get_setting($pdo, 'adsense_header', '');
-$adsense_mid = get_setting($pdo, 'adsense_article_mid', '');
 
-// Fetch Featured Articles (Last 3)
 try {
-    $stmt = $pdo->query("SELECT a.*, c.name as category_name, c.slug as category_slug 
-                         FROM articles a 
-                         LEFT JOIN categories c ON a.category_id = c.id 
-                         WHERE a.status = 'published' 
-                         ORDER BY a.created_at DESC LIMIT 3");
+    $stmt = $pdo->query("SELECT a.*, c.name as category_name, c.slug as category_slug FROM articles a LEFT JOIN categories c ON a.category_id = c.id WHERE a.status = 'published' ORDER BY a.created_at DESC LIMIT 3");
     $featured = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $featured = [];
 }
 
-// Fetch Latest News
 try {
-    $stmt_latest = $pdo->query("SELECT a.*, c.name as category_name, c.slug as category_slug 
-                                FROM articles a 
-                                LEFT JOIN categories c ON a.category_id = c.id 
-                                WHERE a.status = 'published' 
-                                ORDER BY a.created_at DESC LIMIT 3, 12");
+    $stmt_latest = $pdo->query("SELECT a.*, c.name as category_name, c.slug as category_slug FROM articles a LEFT JOIN categories c ON a.category_id = c.id WHERE a.status = 'published' ORDER BY a.created_at DESC LIMIT 3, 12");
     $latest = $stmt_latest->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $latest = [];
 }
 
-// Fetch Categories for Menu
 try {
     $stmt_cats = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
     $categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
@@ -45,44 +31,60 @@ try {
     $categories = [];
 }
 
+function get_image($url, $title)
+{
+    if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL))
+        return htmlspecialchars($url);
+    $initials = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $title), 0, 2));
+    if (empty($initials))
+        $initials = "NW";
+    return "https://placehold.co/800x600/1e293b/ffffff?text=" . urlencode($initials) . "&font=Playfair+Display";
+}
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($site_name) ?> - <?= htmlspecialchars($site_desc) ?></title>
     <meta name="description" content="<?= htmlspecialchars($site_desc) ?>">
-
-    <link rel="stylesheet" href="assets/css/style.css">
-
-    <!-- AdSense Header -->
+    <!-- Boxicons for elegant icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= time() ?>">
     <?= $adsense_header ?>
 </head>
 
 <body>
-
     <header class="site-header">
         <div class="container">
             <div class="header-top">
-                <a href="index.php" class="logo"><?= htmlspecialchars($site_name) ?></a>
+                <a href="index.php" class="logo">
+                    <i class='bx bx-news'></i>
+                    <?= htmlspecialchars(explode(' ', $site_name)[0]) ?><span><?= isset(explode(' ', $site_name)[1]) ? htmlspecialchars(explode(' ', $site_name)[1]) : '' ?></span>
+                </a>
                 <div class="nav-actions">
                     <form action="search.php" method="GET" class="header-search">
-                        <input type="text" name="q" placeholder="Search..." required>
-                        <button type="submit">🔍</button>
+                        <input type="text" name="q" placeholder="Buscar notícias..." required>
+                        <button type="submit" aria-label="Buscar"><i class='bx bx-search'></i></button>
                     </form>
-                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar Tema">🌓</button>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar Tema">
+                        <i class='bx bx-moon'></i>
+                    </button>
                 </div>
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="index.php" class="active">Home</a></li>
-                    <?php foreach ($categories as $cat): ?>
-                        <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>">
-                                <?= htmlspecialchars($cat['name']) ?>
-                            </a></li>
-                    <?php endforeach; ?>
+                    <li><a href="index.php" class="active">Página Inicial</a></li>
+                    <?php if (!empty($categories)):
+                        foreach ($categories as $cat): ?>
+                            <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>">
+                                    <?= htmlspecialchars($cat['name']) ?>
+                                </a></li>
+                        <?php endforeach; else: ?>
+                        <li><a href="#">Brasil</a></li>
+                        <li><a href="#">Mundo</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
@@ -93,85 +95,102 @@ try {
         <?php if (!empty($featured)): ?>
             <section class="hero-section">
                 <div class="grid-featured">
-
-                    <!-- Main Feature -->
                     <?php $main = $featured[0]; ?>
-                    <article class="card-main">
-                        <a href="article.php?slug=<?= urlencode($main['slug']) ?>">
+                    <article class="card card-main">
+                        <a href="article.php?slug=<?= urlencode($main['slug']) ?>"
+                            style="display:flex; flex-direction:column; height: 100%;">
                             <div class="img-container">
-                                <img src="<?= htmlspecialchars($main['image_url'] ?? 'https://via.placeholder.com/1200x800?text=Premium+News') ?>"
-                                    alt="<?= htmlspecialchars($main['title']) ?>" loading="lazy">
+                                <img src="<?= get_image($main['image_url'], $main['title']) ?>"
+                                    onerror="this.src='https://placehold.co/800x600/1e293b/ffffff?text=X'"
+                                    alt="<?= htmlspecialchars($main['title']) ?>">
                             </div>
                             <div class="content">
                                 <span class="category-tag">
-                                    <?= htmlspecialchars($main['category_name'] ?? 'Notícia') ?>
+                                    <i class='bx bxs-bolt-circle'></i>
+                                    <?= htmlspecialchars($main['category_name'] ?? 'Destaque') ?>
                                 </span>
-                                <h1 class="title">
-                                    <?= htmlspecialchars($main['title']) ?>
-                                </h1>
-                                <p class="premium-serif" style="font-size: 1.2rem; color: var(--muted); opacity: 0.8;">
-                                    <?= htmlspecialchars($main['summary']) ?>
+                                <h1 class="title"><?= htmlspecialchars($main['title']) ?></h1>
+                                <p class="summary">
+                                    <?= htmlspecialchars($main['summary'] ?? 'Leia o artigo completo para mais detalhes sobre esta importante notícia.') ?>
                                 </p>
+                                <div class="card-meta">
+                                    <div class="meta-author">
+                                        <div class="meta-avatar"><i class='bx bx-user'></i></div>
+                                        <span>Redação</span>
+                                    </div>
+                                    <span>&bull;</span>
+                                    <span><i class='bx bx-calendar-alt'></i>
+                                        <?= date('d M', strtotime($main['created_at'])) ?></span>
+                                </div>
                             </div>
                         </a>
                     </article>
 
-                    <!-- 2 Small Features -->
                     <div class="card-secondary-container">
                         <?php for ($i = 1; $i <= 2; $i++):
                             if (isset($featured[$i])):
                                 $sm = $featured[$i]; ?>
-                                <article class="card-sm">
-                                    <a href="article.php?slug=<?= urlencode($sm['slug']) ?>">
-                                        <div class="img-wrap">
-                                            <img src="<?= htmlspecialchars($sm['image_url'] ?? 'https://via.placeholder.com/600x400?text=Premium+News') ?>"
-                                                alt="<?= htmlspecialchars($sm['title']) ?>" loading="lazy">
+                                <article class="card card-sm">
+                                    <a href="article.php?slug=<?= urlencode($sm['slug']) ?>"
+                                        style="display:flex; flex-direction:column; height: 100%;">
+                                        <div class="img-container">
+                                            <img src="<?= get_image($sm['image_url'], $sm['title']) ?>"
+                                                onerror="this.src='https://placehold.co/600x400/1e293b/ffffff?text=X'"
+                                                alt="<?= htmlspecialchars($sm['title']) ?>">
                                         </div>
-                                        <div class="content-sm">
-                                            <span class="category-tag">
-                                                <?= htmlspecialchars($sm['category_name'] ?? 'Notícia') ?>
-                                            </span>
-                                            <h3 class="title">
-                                                <?= htmlspecialchars($sm['title']) ?>
-                                            </h3>
+                                        <div class="content">
+                                            <span
+                                                class="category-tag"><?= htmlspecialchars($sm['category_name'] ?? 'Notícia') ?></span>
+                                            <h3 class="title"><?= htmlspecialchars($sm['title']) ?></h3>
+                                            <div class="card-meta">
+                                                <span><i class='bx bx-calendar'></i>
+                                                    <?= date('d M, Y', strtotime($sm['created_at'])) ?></span>
+                                            </div>
                                         </div>
                                     </a>
                                 </article>
                             <?php endif; endfor; ?>
                     </div>
-
                 </div>
             </section>
         <?php else: ?>
-            <div style="padding: 10rem 0; text-align:center;">
-                <h1 class="premium-serif">Welcome to <?= htmlspecialchars($site_name) ?></h1>
-                <p style="color: var(--muted);">Establishing frequencies...</p>
-            </div>
+            <section class="hero-section">
+                <div
+                    style="text-align: center; padding: 4rem 2rem; background: var(--surface); border-radius: var(--radius-md); border: 1px dashed var(--border);">
+                    <i class='bx bx-news' style="font-size: 4rem; color: var(--muted); margin-bottom: 1rem;"></i>
+                    <h2 class="premium-serif">Nenhum artigo publicado ainda</h2>
+                    <p style="color: var(--muted); margin-top: 0.5rem;">Crie conteúdo pelo painel administrativo para
+                        preencher o site.</p>
+                </div>
+            </section>
         <?php endif; ?>
 
-        <!-- Latest News -->
         <?php if (!empty($latest)): ?>
             <section class="latest-section">
-                <h2 class="section-title">Latest Updates</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Últimas Atualizações</h2>
+                    <a href="#" style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">Ver todas <i
+                            class='bx bx-right-arrow-alt'></i></a>
+                </div>
                 <div class="news-list">
                     <?php foreach ($latest as $news): ?>
-                        <article class="news-card">
+                        <article class="card">
                             <a href="article.php?slug=<?= urlencode($news['slug']) ?>">
-                                <div class="img-wrap">
-                                    <img src="<?= htmlspecialchars($news['image_url'] ?? 'https://via.placeholder.com/600x400?text=Premium+News') ?>"
-                                        alt="<?= htmlspecialchars($news['title']) ?>" loading="lazy">
+                                <div class="img-container">
+                                    <img src="<?= get_image($news['image_url'], $news['title']) ?>"
+                                        onerror="this.src='https://placehold.co/600x400/1e293b/ffffff?text=X'"
+                                        alt="<?= htmlspecialchars($news['title']) ?>">
                                 </div>
-                                <span class="category-tag">
-                                    <?= htmlspecialchars($news['category_name'] ?? 'Notícia') ?>
-                                </span>
-                                <h3 class="title">
-                                    <?= htmlspecialchars($news['title']) ?>
-                                </h3>
-                                <p class="summary">
-                                    <?= htmlspecialchars($news['summary']) ?>
-                                </p>
-                                <div class="meta">
-                                    <?= date('M d, Y', strtotime($news['created_at'])) ?>
+                                <div class="content">
+                                    <span class="category-tag"
+                                        style="font-size: 0.65rem; padding: 0.25rem 0.6rem; opacity: 0.8; margin-bottom: 0.75rem;">
+                                        <?= htmlspecialchars($news['category_name'] ?? 'Notícia') ?>
+                                    </span>
+                                    <h3 class="title"><?= htmlspecialchars($news['title']) ?></h3>
+                                    <p class="summary"><?= htmlspecialchars($news['summary']) ?></p>
+                                    <div class="card-meta" style="margin-top: 1rem; border-top: none; padding-top: 0;">
+                                        <span><?= date('d M', strtotime($news['created_at'])) ?> &bull; 3 min de leitura</span>
+                                    </div>
                                 </div>
                             </a>
                         </article>
@@ -184,24 +203,73 @@ try {
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($site_name) ?>. All Rights Reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class='bx bx-news'></i>
+                        <?= htmlspecialchars(explode(' ', $site_name)[0]) ?><span><?= isset(explode(' ', $site_name)[1]) ? htmlspecialchars(explode(' ', $site_name)[1]) : '' ?></span>
+                    </div>
+                    <p class="footer-desc">
+                        <?= htmlspecialchars($site_desc) ?>. Entregando o melhor do conteúdo, análises e tendências com
+                        uma experiência premium.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Navegação</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.php">Página Inicial</a></li>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Privacidade</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Categorias</h4>
+                    <ul class="footer-links">
+                        <?php if (!empty($categories)):
+                            foreach (array_slice($categories, 0, 4) as $cat): ?>
+                                <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>">
+                                        <?= htmlspecialchars($cat['name']) ?>
+                                    </a></li>
+                            <?php endforeach; endif; ?>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($site_name) ?>. Todos os direitos reservados.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Theme Script -->
     <script>
         const btn = document.getElementById('themeToggle');
+        const icon = btn.querySelector('i');
         const html = document.documentElement;
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
+        let savedTheme = localStorage.getItem('theme');
+        if (!savedTheme) {
+            savedTheme = 'dark';
+            localStorage.setItem('theme', 'dark');
+        }
+
         html.setAttribute('data-theme', savedTheme);
+        updateIcon(savedTheme);
 
         btn.addEventListener('click', () => {
             const current = html.getAttribute('data-theme');
             const target = current === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', target);
             localStorage.setItem('theme', target);
+            updateIcon(target);
         });
+
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                icon.className = 'bx bx-sun';
+            } else {
+                icon.className = 'bx bx-moon';
+            }
+        }
     </script>
 </body>
 
