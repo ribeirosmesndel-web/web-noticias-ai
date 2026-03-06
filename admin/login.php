@@ -35,23 +35,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Login Admin - Web Notícias</title>
+    <!-- Premium Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body class="login-body">
     <div class="login-box">
+        <i class='bx bx-news' style="font-size: 3rem; color: var(--admin-accent); margin-bottom: 0.5rem;"></i>
         <h1>Admin Portal</h1>
+        <p>Acesse para gerenciar o seu portal de notícias.</p>
+
         <?php if (isset($error)): ?>
-            <div class="error-msg">
-                <?= $error ?>
-            </div>
+            <div class="error-msg"><i class='bx bx-error-circle'></i> <?= $error ?></div>
         <?php endif; ?>
+
         <form method="POST" action="">
-            <input type="text" name="username" placeholder="Usuário" required>
-            <input type="password" name="password" placeholder="Senha" required>
-            <button type="submit">Entrar</button>
+            <div style="position: relative;">
+                <i class='bx bx-user'
+                    style="position: absolute; left: 1rem; top: 1.1rem; color: var(--admin-text-light);"></i>
+                <input type="text" name="username" placeholder="Usuário" required style="padding-left: 2.5rem;">
+            </div>
+            <div style="position: relative;">
+                <i class='bx bx-lock-alt'
+                    style="position: absolute; left: 1rem; top: 1.1rem; color: var(--admin-text-light);"></i>
+                <input type="password" name="password" placeholder="Senha" required style="padding-left: 2.5rem;">
+            </div>
+            <button type="submit"><i class='bx bx-log-in' style="vertical-align: middle; margin-right: 0.5rem;"></i>
+                Entrar no Painel</button>
         </form>
     </div>
 </body>

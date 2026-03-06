@@ -41,28 +41,36 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Categorias - Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Categorias - Admin</title>
+    <!-- Premium Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header">News Admin</div>
+        <div class="sidebar-header">
+            <i class='bx bx-news'></i> News Admin
+        </div>
         <ul class="nav-menu">
-            <li><a href="index.php">Dashboard</a></li>
-            <li><a href="articles.php">Artigos</a></li>
-            <li><a href="categories.php" class="active">Categorias</a></li>
-            <li><a href="settings.php">Configurações</a></li>
-            <li><a href="n8n_guide.php">Workflow (n8n)</a></li>
+            <li><a href="index.php"><i class='bx bx-grid-alt'></i> Dashboard</a></li>
+            <li><a href="articles.php"><i class='bx bx-file'></i> Artigos</a></li>
+            <li><a href="categories.php" class="active"><i class='bx bx-folder'></i> Categorias</a></li>
+            <li><a href="settings.php"><i class='bx bx-cog'></i> Configurações</a></li>
+            <li><a href="n8n_guide.php"><i class='bx bx-bot'></i> Workflow (n8n)</a></li>
+            <li><a href="update.php"><i class='bx bx-cloud-download'></i> Atualizar Sistema</a></li>
         </ul>
-        <div class="logout-btn"><a href="index.php?logout=1">Sair do Painel</a></div>
+        <div class="logout-btn">
+            <a href="index.php?logout=1"><i class='bx bx-log-out'></i> Sair do Painel</a>
+        </div>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
-            <h2>Gerenciar Categorias</h2>
+            <h2>Categorias e Menus</h2>
         </header>
 
         <div class="page-content" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">

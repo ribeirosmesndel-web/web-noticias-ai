@@ -27,8 +27,11 @@ $recent_ai = $pdo->query("SELECT title, created_at, views FROM articles WHERE ai
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Administração</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Painel Admin - Dashboard</title>
+    <!-- Premium Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
@@ -36,26 +39,27 @@ $recent_ai = $pdo->query("SELECT title, created_at, views FROM articles WHERE ai
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            News Admin
+            <i class='bx bx-news'></i> News Admin
         </div>
         <ul class="nav-menu">
-            <li><a href="index.php" class="active">Dashboard</a></li>
-            <li><a href="articles.php">Artigos</a></li>
-            <li><a href="categories.php">Categorias</a></li>
-            <li><a href="settings.php">Configurações</a></li>
-            <li><a href="n8n_guide.php">Workflow (n8n)</a></li>
-            <li><a href="update.php">Atualizar Sistema</a></li>
+            <li><a href="index.php" class="active"><i class='bx bx-grid-alt'></i> Dashboard</a></li>
+            <li><a href="articles.php"><i class='bx bx-file'></i> Artigos</a></li>
+            <li><a href="categories.php"><i class='bx bx-folder'></i> Categorias</a></li>
+            <li><a href="settings.php"><i class='bx bx-cog'></i> Configurações</a></li>
+            <li><a href="n8n_guide.php"><i class='bx bx-bot'></i> Workflow (n8n)</a></li>
+            <li><a href="update.php"><i class='bx bx-cloud-download'></i> Atualizar Sistema</a></li>
         </ul>
         <div class="logout-btn">
-            <a href="?logout=1">Sair do Painel</a>
+            <a href="?logout=1"><i class='bx bx-log-out'></i> Sair do Painel</a>
         </div>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
-            <h2>Dashboard</h2>
+            <h2>Dashboard Overview</h2>
             <div>
-                <a href="../" target="_blank" class="btn-secondary">Ver Site</a>
+                <a href="../" target="_blank" class="btn-primary"><i class='bx bx-link-external'></i> Ver Site Ao
+                    Vivo</a>
             </div>
         </header>
 
@@ -63,56 +67,74 @@ $recent_ai = $pdo->query("SELECT title, created_at, views FROM articles WHERE ai
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total de Artigos</div>
-                    <div class="stat-value">
-                        <?= number_format($total_articles) ?>
+                    <div class="stat-info">
+                        <span class="stat-label">Total de Artigos</span>
+                        <span class="stat-value"><?= number_format($total_articles) ?></span>
                     </div>
+                    <div class="stat-icon"><i class='bx bx-file-blank'></i></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Visualizações Totais</div>
-                    <div class="stat-value">
-                        <?= number_format((int) $total_views) ?>
+                    <div class="stat-info">
+                        <span class="stat-label">Visualizações Totais</span>
+                        <span class="stat-value"><?= number_format((int) $total_views) ?></span>
                     </div>
+                    <div class="stat-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i
+                            class='bx bx-bar-chart'></i></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Comentários</div>
-                    <div class="stat-value">
-                        <?= number_format($total_comments) ?>
+                    <div class="stat-info">
+                        <span class="stat-label">Comentários</span>
+                        <span class="stat-value"><?= number_format($total_comments) ?></span>
                     </div>
+                    <div class="stat-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"><i
+                            class='bx bx-message-rounded-dots'></i></div>
                 </div>
             </div>
 
             <div style="margin-top: 3rem;">
-                <h3 style="margin-bottom: 1rem;">Últimos Artigos Gerados por IA</h3>
+                <div class="flex-between" style="margin-bottom: 1.5rem;">
+                    <h3><i class='bx bx-bot'
+                            style="color: var(--admin-accent); vertical-align: middle; margin-right: 0.5rem; font-size: 1.5rem;"></i>
+                        Últimos Artigos Gerados por IA</h3>
+                </div>
+
                 <?php if ($recent_ai): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Título</th>
-                                <th>Data</th>
-                                <th>Visualizações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recent_ai as $a): ?>
+                    <div class="table-container">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <?= htmlspecialchars($a['title']) ?>
-                                    </td>
-                                    <td>
-                                        <?= date('d/m/Y H:i', strtotime($a['created_at'])) ?>
-                                    </td>
-                                    <td>
-                                        <?= number_format($a['views']) ?>
-                                    </td>
+                                    <th>Título</th>
+                                    <th>Data de Geração</th>
+                                    <th>Status de Views</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($recent_ai as $a): ?>
+                                    <tr>
+                                        <td style="font-weight: 500; color: var(--admin-primary);">
+                                            <?= htmlspecialchars($a['title']) ?>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-ai"><i class='bx bx-time'></i>
+                                                <?= date('d M Y, H:i', strtotime($a['created_at'])) ?></span>
+                                        </td>
+                                        <td>
+                                            <i class='bx bx-show' style="color: var(--admin-text-light);"></i>
+                                            <?= number_format($a['views']) ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
                     <div
-                        style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e5e7eb; text-align:center; color: #6b7280;">
-                        Nenhum artigo importado do n8n ainda.</div>
+                        style="background: white; padding: 4rem 2rem; border-radius: var(--radius-lg); border: 1px dashed var(--admin-border); text-align:center;">
+                        <i class='bx bx-sleepy'
+                            style="font-size: 3rem; color: var(--admin-text-light); margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--admin-text-light); font-weight: 500;">Nenhum artigo importado do n8n ainda.
+                        </h4>
+                    </div>
                 <?php endif; ?>
             </div>
 

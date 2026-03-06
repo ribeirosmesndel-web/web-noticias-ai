@@ -40,22 +40,30 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Premium Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-header">News Admin</div>
+        <div class="sidebar-header">
+            <i class='bx bx-news'></i> News Admin
+        </div>
         <ul class="nav-menu">
-            <li><a href="index.php">Dashboard</a></li>
-            <li><a href="articles.php">Artigos</a></li>
-            <li><a href="categories.php">Categorias</a></li>
-            <li><a href="settings.php" class="active">Configurações</a></li>
-            <li><a href="n8n_guide.php">Workflow (n8n)</a></li>
+            <li><a href="index.php"><i class='bx bx-grid-alt'></i> Dashboard</a></li>
+            <li><a href="articles.php"><i class='bx bx-file'></i> Artigos</a></li>
+            <li><a href="categories.php"><i class='bx bx-folder'></i> Categorias</a></li>
+            <li><a href="settings.php" class="active"><i class='bx bx-cog'></i> Configurações</a></li>
+            <li><a href="n8n_guide.php"><i class='bx bx-bot'></i> Workflow (n8n)</a></li>
+            <li><a href="update.php"><i class='bx bx-cloud-download'></i> Atualizar Sistema</a></li>
         </ul>
-        <div class="logout-btn"><a href="index.php?logout=1">Sair do Painel</a></div>
+        <div class="logout-btn">
+            <a href="index.php?logout=1"><i class='bx bx-log-out'></i> Sair do Painel</a>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -63,17 +71,17 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <h2>Configurações Globais</h2>
         </header>
 
-        <div class="page-content">
+        <div class="page-content" style="max-width: 900px;">
 
             <?php if (isset($_GET['msg']) && $_GET['msg'] == 'saved'): ?>
-                <div class="success-msg">Configurações salvas com sucesso!</div>
+                <div class="success-msg"><i class='bx bx-check-circle'></i> Configurações salvas com sucesso!</div>
             <?php endif; ?>
 
-            <form method="POST" action="" class="form-card">
+            <form method="POST" action="" class="form-card" style="max-width: 100%;">
 
                 <h3
-                    style="margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.5rem;">
-                    Informações Básicas</h3>
+                    style="margin-top: 0; margin-bottom: 2rem; color: var(--admin-primary); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class='bx bx-info-circle'></i> Informações Básicas</h3>
 
                 <div class="form-group">
                     <label>Nome do Site</label>
@@ -94,16 +102,19 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 </div>
 
                 <h3
-                    style="margin-top: 2.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--admin-border); padding-bottom: 0.5rem;">
-                    Monetização (Google AdSense)</h3>
+                    style="margin-top: 3rem; margin-bottom: 2rem; color: var(--admin-primary); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class='bx bx-dollar-circle'></i> Monetização (Google AdSense)</h3>
 
                 <div class="form-group">
                     <label>AdSense Header Script (Inserido no &lt;head&gt;)</label>
                     <textarea name="adsense_header" class="form-control" rows="4"
                         placeholder="<script data-ad-client=..."></textarea>
-                    <small style="color:#6b7280;">*
-                        <?= htmlspecialchars(substr($current['adsense_header'] ?? '', 0, 50)) ?>...
-                    </small>
+                    <?php if (!empty($current['adsense_header'])): ?>
+                        <small style="color: var(--admin-text-light); margin-top: 0.5rem; display: block;">
+                            <i class='bx bx-check'></i> Atual:
+                            <?= htmlspecialchars(substr($current['adsense_header'], 0, 50)) ?>...
+                        </small>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
@@ -118,7 +129,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         placeholder="<ins class='adsbygoogle'..."></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary" style="margin-top: 1rem;">Salvar Configurações</button>
+                <div style="margin-top: 3rem; text-align: right;">
+                    <button type="submit" class="btn-primary" style="padding: 1rem 2rem;"><i class='bx bx-save'></i>
+                        Salvar Configurações</button>
+                </div>
             </form>
 
         </div>
