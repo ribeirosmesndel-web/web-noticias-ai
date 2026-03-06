@@ -124,7 +124,70 @@ $seo_desc = !empty($article['seo_description']) ? $article['seo_description'] : 
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($site_name) ?>. All Rights Reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class='bx bx-news'></i>
+                        <?php
+                        $site_name_parts = explode(' ', $site_name ?? '');
+                        echo htmlspecialchars($site_name_parts[0] ?? '');
+                        if (isset($site_name_parts[1])) {
+                            echo '<span>' . htmlspecialchars($site_name_parts[1]) . '</span>';
+                        }
+                        ?>
+                    </div>
+                    <p class="footer-desc">
+                        O portal líder em notícias curadas por Inteligência Artificial. Rapidez, precisão e design de
+                        classe mundial.
+                    </p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-icon" aria-label="Twitter"><i class='bx bxl-twitter'></i></a>
+                        <a href="#" class="social-icon" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                        <a href="#" class="social-icon" aria-label="Instagram"><i class='bx bxl-instagram'></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="footer-title">Navegação</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.php">Página Inicial</a></li>
+                        <li><a href="search.php">Pesquisa Avançada</a></li>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Contato Editorial</a></li>
+                        <li><a href="#">Privacidade & Termos</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-title">Explore</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Tecnologia</a></li>
+                        <li><a href="#">Inovação</a></li>
+                        <li><a href="#">Mercado</a></li>
+                        <li><a href="#">Startups</a></li>
+                        <li><a href="#">Opinião AI</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-subscribe">
+                    <h4 class="footer-title">Newsletter Premium</h4>
+                    <p>Receba as análises mais profundas diretamente na sua caixa de entrada, todas as manhãs.</p>
+                    <form class="subscribe-form" action="#" method="POST"
+                        onsubmit="event.preventDefault(); alert('Assinatura confirmada com sucesso!');">
+                        <input type="email" placeholder="Seu melhor e-mail..." required>
+                        <button type="submit"><i class='bx bx-send'></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($site_name) ?>. Todos os direitos reservados.</p>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;"><i class='bx bx-check-shield'
+                            style="color: var(--accent);"></i> Criptografia SSL</span>
+                    <span>Design by Stitch</span>
+                </div>
+            </div>
         </div>
     </footer>
 

@@ -210,33 +210,60 @@ function get_image($url, $title)
                         <?= htmlspecialchars(explode(' ', $site_name)[0]) ?><span><?= isset(explode(' ', $site_name)[1]) ? htmlspecialchars(explode(' ', $site_name)[1]) : '' ?></span>
                     </div>
                     <p class="footer-desc">
-                        <?= htmlspecialchars($site_desc) ?>. Entregando o melhor do conteúdo, análises e tendências com
-                        uma experiência premium.
+                        <?= htmlspecialchars($site_desc ?? 'O portal líder em notícias curadas por Inteligência Artificial. Rapidez, precisão e design de classe mundial.') ?>
                     </p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-icon" aria-label="Twitter"><i class='bx bxl-twitter'></i></a>
+                        <a href="#" class="social-icon" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                        <a href="#" class="social-icon" aria-label="Instagram"><i class='bx bxl-instagram'></i></a>
+                    </div>
                 </div>
+
                 <div>
                     <h4 class="footer-title">Navegação</h4>
                     <ul class="footer-links">
                         <li><a href="index.php">Página Inicial</a></li>
+                        <li><a href="search.php">Pesquisa Avançada</a></li>
                         <li><a href="#">Sobre Nós</a></li>
-                        <li><a href="#">Contato</a></li>
-                        <li><a href="#">Privacidade</a></li>
+                        <li><a href="#">Contato Editorial</a></li>
+                        <li><a href="#">Privacidade & Termos</a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h4 class="footer-title">Categorias</h4>
+                    <h4 class="footer-title">Explore</h4>
                     <ul class="footer-links">
                         <?php if (!empty($categories)):
-                            foreach (array_slice($categories, 0, 4) as $cat): ?>
+                            foreach (array_slice($categories, 0, 5) as $cat): ?>
                                 <li><a href="category.php?slug=<?= htmlspecialchars($cat['slug']) ?>">
                                         <?= htmlspecialchars($cat['name']) ?>
                                     </a></li>
-                            <?php endforeach; endif; ?>
+                            <?php endforeach; else: ?>
+                            <li><a href="#">Tecnologia</a></li>
+                            <li><a href="#">Inovação</a></li>
+                            <li><a href="#">Mercado</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
+
+                <div class="footer-subscribe">
+                    <h4 class="footer-title">Newsletter Premium</h4>
+                    <p>Receba as análises mais profundas diretamente na sua caixa de entrada, todas as manhãs.</p>
+                    <form class="subscribe-form" action="#" method="POST"
+                        onsubmit="event.preventDefault(); alert('Assinatura confirmada com sucesso!');">
+                        <input type="email" placeholder="Seu melhor e-mail..." required>
+                        <button type="submit"><i class='bx bx-send'></i></button>
+                    </form>
+                </div>
             </div>
+
             <div class="footer-bottom">
                 <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($site_name) ?>. Todos os direitos reservados.</p>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;"><i class='bx bx-check-shield'
+                            style="color: var(--accent);"></i> Criptografia SSL</span>
+                    <span>Design by Stitch</span>
+                </div>
             </div>
         </div>
     </footer>
